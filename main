@@ -1,0 +1,119 @@
+#eli heidenreich
+#lab07
+
+#I wanted to make a binary search tree that had a length/distance between nodes
+#This program alters the Node class from prior labs to include length
+#The insert function is also different as it has to add the length as well
+
+class Node:
+
+  def __init__(self, data):
+    self.data = data
+    self.right = None
+    self.left = None
+    self.lengthRight = None
+    self.lengthLeft = None
+
+class BST:
+
+  def __init__(self):
+    self.root = None
+
+  def insert(self, data, length): #same insert function as lab06
+                                  #but added length between nodes
+    self.__insert(self.root, data, length)
+
+  def __insert(self, cur, data, length):
+    newNode = Node(data)
+
+    if self.root is None:
+      self.root = newNode
+      return
+
+    if cur.data < data:
+      if cur.right is None:
+        cur.right = newNode
+        cur.lengthRight = length
+        return
+      else:
+        self.__insert(cur.right, data, length)
+
+    if cur.data > data:
+      if cur.left is None:
+        cur.left = newNode
+        cur.lengthLeft = length
+        return
+      else:
+        self.__insert(cur.left, data, length)
+
+  def numberOfHops(self, data): #this function returns number of hops from root to node
+    self.hops = 0
+    return self.__numberOfHops(self.root, data)
+
+  def __numberOfHops(self, cur, data):
+    if cur is None:
+      return self.hops
+
+    if cur.data == data:
+      return self.hops
+    else:
+      self.hops += 1
+      if cur.data < data:
+        return self.__numberOfHops(cur.right, data)
+      elif cur.data > data:
+        return self.__numberOfHops(cur.left, data)
+
+  def searchFor(self, data):
+    return self.__searchFor(self.root, data)
+
+  def __searchFor(self, cur, data):
+    if cur is None:
+      return False
+    if cur.data == data:
+      return True
+    else:
+      if cur.data < data:
+        return self.__searchFor(cur.right, data)
+      elif cur.data > data:
+        return self.__searchFor(cur.left, data)
+
+  def distanceOfHops(self, data):
+    self.distance = 0
+    if self.searchFor(data) is True:
+      return self.__distanceOfHops(self.root, data)
+
+  def __distanceOfHops(self, cur, data):
+    if cur is None:
+      return self.distance
+
+    if cur.data == data:
+      return self.distance
+    else:
+      if cur.data < data:
+        if cur.lengthRight is not None:
+          self.distance += cur.lengthRight
+        return self.__distanceOfHops(cur.right, data)
+      elif cur.data > data:
+        if cur.lengthLeft is not None:
+          self.distance += cur.lengthLeft
+        return self.__distanceOfHops(cur.left, data)
+    
+    
+    
+      
+        
+
+
+if __name__ == "__main__":
+  mainBST = BST()
+  mainBST.insert(25, 50) #the 50 here is meaningless as its the root and is never added to the node
+  mainBST.insert(12, 25)
+  mainBST.insert(34, 75)
+  mainBST.insert(4, 125)
+
+  print(mainBST.root.right.data)
+  print(mainBST.root.lengthRight)
+
+  print(mainBST.numberOfHops(4))
+  print(mainBST.searchFor(4))
+  print(mainBST.distanceOfHops(4))
